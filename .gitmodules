@@ -1,0 +1,4 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/autotel/modular-performance-prototype-01
+	branch = node-frontend-submodule
