@@ -23,6 +23,7 @@
   "homepage": "https://github.com/autotel/node-patternplatform#readme",
   "dependencies": {
     "http-server": "^0.10.0",
-    "socket.io": "^1.7.3"
+    "socket.io": "^1.7.3",
+    "web-audio-api": "^0.2.2"
   }
 }
