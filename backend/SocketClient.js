@@ -27,6 +27,26 @@ var SocketClient=function(socket,server){
     })(a);
   }
 
+
+  var shoplist=[
+    //composite
+    'flower',
+    //molecule
+    'licog',
+    //submolecule
+    'monitor',
+    'operator',
+    'input',
+    'fifo',
+    'output',
+  ];
+  var c=0;
+  for(var element of shoplist){
+    var modl;
+    socket.emit(server.messageIndexes.CREATE,{id:c,mode:element,x:100,y:30*(shoplist.length-c)});
+    c++;
+  }
+
   socket.on('disconnect',function(e){
     console.log("client disconnected");
   });
