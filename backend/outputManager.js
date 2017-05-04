@@ -19,7 +19,7 @@ var Output=function(){
   }
 }
 
-module.exports= new(function(){
+module.exports= function(master){return new(function(master){
   var MidiPlayer=new(function(){
     Output.call(this);
     return this;
@@ -38,4 +38,4 @@ module.exports= new(function(){
     console.log('Cannot open default MIDI-Out port!');
   }
   return this;
-})();
+})()};

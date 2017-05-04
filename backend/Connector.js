@@ -1,6 +1,6 @@
 module.exports=function(owner){
-  var children=[];
-  this.children=children;
+  owner.children=[];
+  var children=owner.children;
   this.sendToAll=function(message){
     for(var a of children){
       children[a].putMessage(message);

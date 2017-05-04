@@ -1,5 +1,18 @@
 var components=require('./components');
 var Message=require('./message.js');
+var uniqueArray=[];
+
+//allocates a new data-bound item to the unique array and returns the id within the array;
+function appendToUnique(what){
+  var a=0;
+  for(a in uniqueArray){
+    if(uniqueArray[a]===false){
+      uniqueArray[a]=what;
+      return a;
+    }
+  }
+  return uniqueArray.push(what)-1;
+}
 
 var connectionManager=new (function(){
   this.connect=function(){};
@@ -7,11 +20,43 @@ var connectionManager=new (function(){
   return this;
 })();
 
-var systemManager=function(httpSocket){
-  httpSocket.on('start',function(){});
-  httpSocket.on('componentCreated',function(event){});
-  httpSocket.on('componentDeleted',function(event){});
-  httpSocket.on('connectionCreated',function(event){});
+
+var systemManager=function(master){
+  var server=master.httpSocket;
+
+  var createComponent=function(params){
+    if(typeof components[params.mode]==="function"){
+      var modl=new components[params.mode]();
+      for(var a in params){
+        modl[a]=params[a];
+      }
+      var c=appendToUnique(modl);
+      var nParams=params;
+      nParams.id=c;
+      server.emit(server.messageIndexes.CREATE,nParams);
+    }else{
+      console.warn("invalid component mode  "+params.type,JSON.stringify(params));
+    }
+  }
+  this.createComponent=createComponent;
+  this.each=function(cb){
+    for(var a in uniqueArray){
+      cb.call(uniqueArray[a],{index:a});
+    }
+  }
+  server.on('start',function(){});
+  server.on('rec_create',function(event){
+    console.log("component create requested");
+    createComponent(event);
+  });
+  server.on('rec_delete',function(event){
+  });
+  server.on('rec_change',function(event){
+  });
+
+
+
+
   return this;
 };
 

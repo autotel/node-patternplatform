@@ -22,30 +22,13 @@ var SocketClient=function(socket,server){
         };
         console.log(JSON.stringify(event));
         server.handle('message',event);
-        server.handle(messageName.toLowerCase(),event);
+        server.handle("rec_"+messageName.toLowerCase(),event);
       });
     })(a);
   }
 
 
-  var shoplist=[
-    //composite
-    'flower',
-    //molecule
-    'licog',
-    //submolecule
-    'monitor',
-    'operator',
-    'input',
-    'fifo',
-    'output',
-  ];
-  var c=0;
-  for(var element of shoplist){
-    var modl;
-    socket.emit(server.messageIndexes.CREATE,{id:c,mode:element,x:100,y:30*(shoplist.length-c)});
-    c++;
-  }
+
 
   socket.on('disconnect',function(e){
     console.log("client disconnected");

@@ -7,7 +7,8 @@ var app = express();
 var http = require('http').Server(app);
 var SocketMan = require('socket.io')(http);
 var getMessageNames=require('../bothEnds/messageNames.js');
-module.exports=new (function(){
+
+module.exports=function(master){ return new (function(master){
   onHandlers.call(this);
   var serverMan=this;
   var SocketClient = new (require('./SocketClient.js'))(this);
@@ -25,6 +26,11 @@ module.exports=new (function(){
     });
     SocketMan.on('connection', function(socket){
       new SocketClient.add(socket,serverMan);
+      master.systemManager.each(function(){
+        var nparams=this.getAllParameters();
+        console.log(nparams);
+        serverMan.emit(serverMan.messageIndexes.CREATE,nparams);
+      });
     });
   }
 
@@ -37,12 +43,9 @@ module.exports=new (function(){
     this.handle(event.message,event);
   });
 
-  this.sendChange=function(data){}
-  this.sendEvent=function(data){}
-  this.sendConsole=function(data){}
-
-
-
+  this.emit=function(a,b){
+    SocketMan.emit(a,b);
+  }
 
   return this;
-})();
+})(master)};
