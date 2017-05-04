@@ -8,9 +8,11 @@ function appendToUnique(what){
   for(a in uniqueArray){
     if(uniqueArray[a]===false){
       uniqueArray[a]=what;
+      console.log("assign slot"+a+"to new");
       return a;
     }
   }
+  console.log("assign slot"+uniqueArray.length+"to new");
   return uniqueArray.push(what)-1;
 }
 
@@ -27,12 +29,13 @@ var systemManager=function(master){
   var createComponent=function(params){
     if(typeof components[params.mode]==="function"){
       var modl=new components[params.mode]();
-      for(var a in params){
-        modl[a]=params[a];
-      }
       var c=appendToUnique(modl);
       var nParams=params;
-      nParams.id=c;
+      nParams.unique=c;
+      for(var a in nParams){
+        modl[a]=nParams[a];
+      }
+      console.log("_assign"+nParams.unique);
       server.emit(server.messageIndexes.CREATE,nParams);
     }else{
       console.warn("invalid component mode  "+params.type,JSON.stringify(params));
