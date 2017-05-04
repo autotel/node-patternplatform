@@ -6,34 +6,18 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var SocketMan = require('socket.io')(http);
-
+var getMessageNames=require('../bothEnds/messageNames.js');
 module.exports=new (function(){
   onHandlers.call(this);
   var serverMan=this;
   var SocketClient = new (require('./SocketClient.js'))(this);
 
-  var messageIndexes={
-    HELLO:0,
-    CHANGE:0,
-    CREATE:0,
-    DELETE:0,
-    EVENT:0,
-    CONSOLE:0
-  }
-  var messageNames=[];
-  var b=0;
-  for(var a in messageIndexes){
-    console.log("name of "+b+" = "+a);
-    messageIndexes[a]=b;
-    messageNames[b]=a;
-    b++;
-  }
-  this.messageNames=messageNames;
-  this.messageIndexes=messageIndexes;
+  getMessageNames(this);
 
   this.start=function(file){
     app.get('/', function(req, res){
-      app.use(express.static('frontend'));
+      app.use("/",express.static('frontend'));
+      app.use("/shared",express.static('bothEnds'));
       res.sendFile(file);
     });
     http.listen(httpPort, function(){
