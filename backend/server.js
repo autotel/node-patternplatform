@@ -9,6 +9,27 @@ var SocketMan = require('socket.io')(http);
 
 module.exports=new (function(){
   onHandlers.call(this);
+  var serverMan=this;
+  var SocketClient = new (require('./SocketClient.js'))(this);
+
+  var messageIndexes={
+    HELLO:0,
+    CHANGE:0,
+    CREATE:0,
+    DELETE:0,
+    EVENT:0,
+    CONSOLE:0
+  }
+  var messageNames=[];
+  var b=0;
+  for(var a in messageIndexes){
+    console.log("name of "+b+" = "+a);
+    messageIndexes[a]=b;
+    messageNames[b]=a;
+    b++;
+  }
+  this.messageNames=messageNames;
+  this.messageIndexes=messageIndexes;
 
   this.start=function(file){
     app.get('/', function(req, res){
@@ -19,15 +40,10 @@ module.exports=new (function(){
       console.log('listening on :'+httpPort);
     });
     SocketMan.on('connection', function(socket){
-      console.log('a user connected');
+      new SocketClient.add(socket,serverMan);
     });
   }
 
-  var messageNames={
-    HELLO:0X01,
-    CHANGE:0X02,
-    EVENT:0X03,
-  }
 
 
 //pseudo code
@@ -36,6 +52,10 @@ module.exports=new (function(){
     console.log(event);
     this.handle(event.message,event);
   });
+
+  this.sendChange=function(data){}
+  this.sendEvent=function(data){}
+  this.sendConsole=function(data){}
 
 
 
