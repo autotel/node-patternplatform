@@ -29,8 +29,20 @@ module.exports=function(master){ return new (function(master){
       master.systemManager.each(function(){
         var nparams=this.getAllParameters();
         console.log(nparams);
-        serverMan.emit(serverMan.messageIndexes.CREATE,nparams);
+        socket.emit(serverMan.messageIndexes.CREATE,nparams);
       });
+
+      socket.on(serverMan.messageIndexes.CREATE,function(event){
+        // server.on('rec_create',function(event){
+          console.log("component create requested");
+          master.systemManager.createComponent(event,function(params){
+            socket.broadcast(serverMan.messageIndexes.CREATE,params);
+            // socket.emit(server.messageIndexes.CREATE,params);
+          });
+        // });
+      });
+
+
     });
   }
 

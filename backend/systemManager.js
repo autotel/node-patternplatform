@@ -1,3 +1,4 @@
+'use strict';
 var components=require('./components');
 var Message=require('./message.js');
 var uniqueArray=[];
@@ -23,45 +24,38 @@ var connectionManager=new (function(){
 })();
 
 
-var systemManager=function(master){
-  var server=master.httpSocket;
+module.exports=function(master){
+  return new(function(master){
+    var server=master.httpSocket;
 
-  var createComponent=function(params){
-    if(typeof components[params.mode]==="function"){
-      var modl=new components[params.mode]();
-      var c=appendToUnique(modl);
-      var nParams=params;
-      nParams.unique=c;
-      for(var a in nParams){
-        modl[a]=nParams[a];
+    var createComponent=function(params,callback){
+      if(typeof components[params.mode]==="function"){
+        var modl=new components[params.mode]();
+        var c=appendToUnique(modl);
+        var nParams=params;
+        nParams.unique=c;
+        for(var a in nParams){
+          modl[a]=nParams[a];
+        }
+        console.log("_assign"+nParams.unique);
+        if(typeof callback==="function")
+        callback(nParams);
+      }else{
+        console.warn("invalid component mode  "+params.type,JSON.stringify(params));
       }
-      console.log("_assign"+nParams.unique);
-      server.emit(server.messageIndexes.CREATE,nParams);
-    }else{
-      console.warn("invalid component mode  "+params.type,JSON.stringify(params));
     }
-  }
-  this.createComponent=createComponent;
-  this.each=function(cb){
-    for(var a in uniqueArray){
-      cb.call(uniqueArray[a],{index:a});
+    this.createComponent=createComponent;
+    this.each=function(cb){
+      for(var a in uniqueArray){
+        cb.call(uniqueArray[a],{index:a});
+      }
     }
-  }
-  server.on('start',function(){});
-  server.on('rec_create',function(event){
-    console.log("component create requested");
-    createComponent(event);
-  });
-  server.on('rec_delete',function(event){
-  });
-  server.on('rec_change',function(event){
-  });
+    server.on('start',function(){});
 
+    server.on('rec_delete',function(event){
+    });
+    server.on('rec_change',function(event){
+    });
 
-
-
-  return this;
+  })(master);
 };
-
-
-module.exports=systemManager;
