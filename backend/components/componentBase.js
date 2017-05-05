@@ -7,7 +7,8 @@ module.exports=function(){
   this.y=0;
   this.unique=0;
   this.mode="empty";
-  this.boundParameters=['x','y','unique','mode','children'];
+  this.boundParameters=['x','y','unique','mode'];
+  this.ontoParams=['unique','mode'];
   this.receivedParameters={};
   var thisComponent=this;
   this.putMessage=function(message){
@@ -21,6 +22,16 @@ module.exports=function(){
       thisComponent.receivedParameters[a]=params[a];
     }
   };
+  //get the least parameters for creation
+  //clients need all elements to be created first in order to be able to make
+  //connections to these already created elements.
+  this.getOntoParams=function(){
+    var ret={};
+    for (var a of this.ontoParams)
+      ret[a]=this[a];
+    return ret;
+  }
+  //get all cached parameters for initial configuration of objects.
   this.getAllParameters=function(){
     for (var a of this.boundParameters)
       if(!thisComponent.receivedParameters.hasOwnProperty(a))

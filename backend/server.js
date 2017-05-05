@@ -27,9 +27,12 @@ module.exports=function(master){ return new (function(master){
     SocketMan.on('connection', function(socket){
       new SocketClient.add(socket,master);
       master.systemManager.each(function(){
-        var nparams=this.getAllParameters();
-        console.log(nparams);
+        var nparams=this.getOntoParams();
         socket.emit(serverMan.messageIndexes.CREATE,nparams);
+      });
+      master.systemManager.each(function(){
+        var nparams=this.getAllParameters();
+        socket.emit(serverMan.messageIndexes.CHANGE,nparams);
       });
     });
   }
