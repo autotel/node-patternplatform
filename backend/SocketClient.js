@@ -3,8 +3,10 @@ var socketList=[];
 
 var onHandlers=require('onHandlers');
 
-var SocketClient=function(socket,server){
+var SocketClient=function(socket,master){
+  var server=master.httpSocket;
   console.log('a client connected');
+  console.log(master);
   onHandlers.call(this);
   socketList.push(this);
   socket.emit(server.messageIndexes.HELLO,"hellolo");
@@ -27,6 +29,19 @@ var SocketClient=function(socket,server){
     })(a);
   }
 
+  socket.on(server.messageIndexes.CREATE,function(event){
+    console.log("component create requested");
+    master.systemManager.createComponent(event,function(params){
+      socket.broadcast.emit(server.messageIndexes.CREATE,params);
+      socket.emit(server.messageIndexes.CREATE,params);
+    });
+  });
+  socket.on(server.messageIndexes.CHANGE,function(params){
+    master.systemManager.tweakComponent(params,function(original){
+      socket.broadcast.emit(server.messageIndexes.CHANGE,params);
+    });
+  });
+
 
 
 
@@ -38,8 +53,8 @@ var SocketClient=function(socket,server){
 
 module.exports=function(server){
   onHandlers.call(this);
-  this.add=function(socket){
-    return new SocketClient(socket,server);
+  this.add=function(socket,master){
+    return new SocketClient(socket,master);
   }
   this.each=function(cb){
     for(var a in socketList){

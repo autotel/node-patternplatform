@@ -25,35 +25,23 @@ module.exports=function(master){ return new (function(master){
       console.log('listening on :'+httpPort);
     });
     SocketMan.on('connection', function(socket){
-      new SocketClient.add(socket,serverMan);
+      new SocketClient.add(socket,master);
       master.systemManager.each(function(){
         var nparams=this.getAllParameters();
         console.log(nparams);
         socket.emit(serverMan.messageIndexes.CREATE,nparams);
       });
-
-      socket.on(serverMan.messageIndexes.CREATE,function(event){
-        // server.on('rec_create',function(event){
-          console.log("component create requested");
-          master.systemManager.createComponent(event,function(params){
-            socket.broadcast.emit(serverMan.messageIndexes.CREATE,params);
-            // socket.emit(server.messageIndexes.CREATE,params);
-          });
-        // });
-      });
-
-
     });
   }
 
 
 
 //pseudo code
-  SocketMan.on('message',function(event){
-    var newEvent=event;
-    console.log(event);
-    this.handle(event.message,event);
-  });
+  // SocketMan.on('message',function(event){
+  //   var newEvent=event;
+  //   console.log(event);
+  //   this.handle(event.message,event);
+  // });
 
   this.emit=function(a,b){
     SocketMan.emit(a,b);

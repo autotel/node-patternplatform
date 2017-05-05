@@ -27,8 +27,7 @@ var connectionManager=new (function(){
 module.exports=function(master){
   return new(function(master){
     var server=master.httpSocket;
-
-    var createComponent=function(params,callback){
+    this.createComponent=function(params,callback){
       if(typeof components[params.mode]==="function"){
         var modl=new components[params.mode]();
         var c=appendToUnique(modl);
@@ -44,18 +43,23 @@ module.exports=function(master){
         console.warn("invalid component mode  "+params.type,JSON.stringify(params));
       }
     }
-    this.createComponent=createComponent;
+    this.tweakComponent=function(params,callback){
+      if(uniqueArray[params.unique]){
+        var modl=uniqueArray[params.unique];
+        modl.getSocketParameters(params);
+        if(typeof callback==="function"){
+          callback(params);
+        }
+      }else{
+        console.warn("requested a change in an element that doesn't exist "+params.unique,JSON.stringify(params));
+      }
+    }
+
     this.each=function(cb){
       for(var a in uniqueArray){
         cb.call(uniqueArray[a],{index:a});
       }
     }
-    server.on('start',function(){});
-
-    server.on('rec_delete',function(event){
-    });
-    server.on('rec_change',function(event){
-    });
 
   })(master);
 };

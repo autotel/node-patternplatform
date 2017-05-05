@@ -8,6 +8,7 @@ module.exports=function(){
   this.unique=0;
   this.mode="empty";
   this.boundParameters=['x','y','unique','mode','children'];
+  this.receivedParameters={};
   var thisComponent=this;
   this.putMessage=function(message){
     var nMessage=message.clone();
@@ -15,12 +16,17 @@ module.exports=function(){
   };
   this.receive=function(message){
   }
-  this.getAllParameters=function(){
-    var ret={};
-    for (var a of thisComponent.boundParameters){
-      ret[a]=this[a];
+  this.getSocketParameters=function(params){
+    for(var a in params){
+      thisComponent.receivedParameters[a]=params[a];
     }
-    return ret;
+  };
+  this.getAllParameters=function(){
+    for (var a of this.boundParameters)
+      if(!thisComponent.receivedParameters.hasOwnProperty(a))
+        thisComponent.receivedParameters[a]=this[a];
+
+    return thisComponent.receivedParameters;
   }
   return this;
 };
