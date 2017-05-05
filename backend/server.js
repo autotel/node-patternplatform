@@ -36,7 +36,7 @@ module.exports=function(master){ return new (function(master){
         // server.on('rec_create',function(event){
           console.log("component create requested");
           master.systemManager.createComponent(event,function(params){
-            socket.broadcast(serverMan.messageIndexes.CREATE,params);
+            socket.broadcast.emit(serverMan.messageIndexes.CREATE,params);
             // socket.emit(server.messageIndexes.CREATE,params);
           });
         // });
